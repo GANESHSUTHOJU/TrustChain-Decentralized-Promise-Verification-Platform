@@ -1,0 +1,409 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TrustChain - Decentralized Promise Verification Platform</title>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        /* Basic resets and dark theme setup */
+        body {
+            margin: 0;
+            font-family: 'Orbitron', sans-serif;
+            background: linear-gradient(135deg, #000000, #0f0c29, #302b63, #24243e);
+            color: #fff;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Header styling */
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem 2rem;
+            background: rgba(0, 0, 0, 0.7);
+            box-shadow: 0 0 10px #6e00ff;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .logo {
+            font-size: 1.8rem;
+            color: #6e00ff;
+            font-weight: 700;
+            text-shadow: 0 0 10px #6e00ff;
+        }
+
+        nav a {
+            color: #8a2be2;
+            margin-left: 1.5rem;
+            text-decoration: none;
+            font-weight: 600;
+            transition: color 0.3s ease;
+        }
+
+        nav a:hover {
+            color: #00ffff;
+            text-shadow: 0 0 8px #00ffff;
+        }
+        nav a.active {
+            color: #00ffff;
+            text-shadow: 0 0 8px #00ffff;
+            font-weight: 800;
+        }
+
+        /* Connect wallet button */
+        #connectWalletBtn {
+            background: #6e00ff;
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            color: white;
+            cursor: pointer;
+            font-weight: 700;
+            box-shadow: 0 0 10px #6e00ff;
+            transition: box-shadow 0.3s ease;
+        }
+
+        #connectWalletBtn:hover {
+            box-shadow: 0 0 20px #00ffff;
+        }
+
+        /* Main content styling */
+        main {
+            flex: 1;
+            padding: 2rem;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        /* Glassmorphism card style */
+        .card {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 15px;
+            padding: 1.5rem;
+            margin: 0 auto 1.5rem; /* center card horizontally */
+            max-width: 600px;
+            box-shadow: 0 0 15px rgba(110, 0, 255, 0.5);
+            backdrop-filter: blur(10px);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 0 25px #00ffff;
+        }
+
+        /* Form styles */
+        form {
+            display: flex;
+            flex-direction: column;
+        }
+
+        label {
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+            color: #9a7aff;
+        }
+
+        input[type="text"], textarea, select, input[type="number"] {
+            padding: 0.5rem;
+            border-radius: 10px;
+            border: none;
+            margin-bottom: 1rem;
+            background: rgba(255, 255, 255, 0.1);
+            color: #000; /* make text dark for better contrast */
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1rem;
+            resize: vertical;
+        }
+
+        select {
+            /* override any browser default colors */
+            color: #000;
+        }
+
+        option {
+            color: #000;
+        }
+
+        /* ensure number input doesn't shrink */
+        input[type="number"] {
+            -moz-appearance: textfield;
+            appearance: textfield;
+        }
+
+        button {
+            background: #6e00ff;
+            border: none;
+            padding: 0.75rem;
+            border-radius: 25px;
+            color: white;
+            font-weight: 700;
+            cursor: pointer;
+            box-shadow: 0 0 15px #6e00ff;
+            transition: box-shadow 0.3s ease;
+        }
+
+        button:hover {
+            box-shadow: 0 0 25px #00ffff;
+        }
+
+        /* Quick ID buttons */
+        .quick-id-btn {
+            background: linear-gradient(135deg, #00ffff, #6e00ff);
+            padding: 0.6rem 1.2rem;
+            font-size: 0.95rem;
+            flex: 1;
+            max-width: 150px;
+            box-shadow: 0 0 10px #00ffff;
+        }
+
+        .quick-id-btn:hover {
+            box-shadow: 0 0 20px #00ffff;
+            background: linear-gradient(135deg, #00ffff, #8a2be2);
+        }
+
+        /* Status badges */
+        .badge {
+            padding: 0.3rem 0.7rem;
+            border-radius: 15px;
+            font-weight: 700;
+            font-size: 0.9rem;
+            display: inline-block;
+        }
+
+        .pending {
+            background-color: orange;
+            color: black;
+        }
+
+        .fulfilled {
+            background-color: #00ff00;
+            color: black;
+        }
+
+        /* Section spacing to avoid header overlap */
+        section {
+            padding: 2rem 0;
+            scroll-margin-top: 80px; /* offset for sticky header when linking */
+            background: rgba(0,0,0,0.1);
+            margin-bottom: 1rem;
+            border-radius: 12px;
+        }
+
+        /* Center home heading and subtitle */
+        #home h1, #home p {
+            text-align: center;
+            margin-left: auto;
+            margin-right: auto;
+            max-width: 900px;
+        }
+
+        /* Statistics cards container */
+        .stats {
+            display: flex;
+            justify-content: space-around;
+            margin-bottom: 2rem;
+        }
+
+        .stat-card {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 15px;
+            padding: 1rem 2rem;
+            text-align: center;
+            box-shadow: 0 0 15px rgba(110, 0, 255, 0.5);
+            width: 150px;
+            font-weight: 700;
+            font-size: 1.2rem;
+        }
+
+        /* Promise cards container */
+        .promise-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1rem;
+        }
+
+        /* Footer styling */
+        footer {
+            text-align: center;
+            padding: 1rem;
+            background: rgba(0, 0, 0, 0.7);
+            color: #6e00ff;
+            font-weight: 600;
+            box-shadow: 0 0 10px #6e00ff;
+            margin-top: auto;
+        }
+
+        /* Animated background gradient */
+        @keyframes gradientBG {
+            0% {
+                background-position: 0% 50%;
+            }
+            50% {
+                background-position: 100% 50%;
+            }
+            100% {
+                background-position: 0% 50%;
+            }
+        }
+
+        body {
+            background: linear-gradient(270deg, #0f0c29,);
+            background-size: 800% 800%;
+            animation: gradientBG 15s ease infinite;
+        }
+
+        /* Glow animation for buttons */
+        .glow {
+            animation: glowEffect 2s infinite alternate;
+        }
+
+        @keyframes glowEffect {
+            from {
+                box-shadow: 0 0 5px #6e00ff;
+            }
+            to {
+                box-shadow: 0 0 20px #00ffff;
+            }
+        }
+
+        /* center forms and ensure full-width inputs */
+        #verifyPromiseForm,
+        #createPromiseForm {
+            max-width: 400px;
+            margin: 0 auto;
+            display: flex;
+            flex-direction: column;
+            align-items: stretch;
+        }
+
+        #verifyPromiseForm input,
+        #verifyPromiseForm select,
+        #createPromiseForm input,
+        #createPromiseForm textarea,
+        #createPromiseForm select {
+            width: 100%;
+            box-sizing: border-box;
+            margin-bottom: 1rem;
+        }
+
+        #createPromiseForm button {
+            align-self: center;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="logo">TrustChain</div>
+        <nav>
+            <a href="#home">Home</a>
+            <a href="#dashboard">Dashboard</a>
+            <a href="#verify">Verify</a>
+        </nav>
+        <button id="connectWalletBtn" class="glow">Connect Wallet</button>
+    </header>
+
+    <main>
+        <section id="home">
+            <h1>Welcome to TrustChain</h1>
+            <p>Create, verify, and track promises on the Monad blockchain.</p>
+
+            <div class="card">
+                <h2>Create a Promise</h2>
+                <form id="createPromiseForm">
+                    <label for="title">Title</label>
+                    <input type="text" id="title" name="title" placeholder="E.g. Finish project" required>
+
+                    <label for="description">Description</label>
+                    <textarea id="description" name="description" rows="4" placeholder="Describe the promise" required></textarea>
+
+                    <label for="category">Category</label>
+                    <select id="category" name="category" required>
+                        <option value="Freelance Work">Freelance Work</option>
+                        <option value="Job Offer">Job Offer</option>
+                        <option value="Payment Agreement">Payment Agreement</option>
+                        <option value="Scholarship">Scholarship</option>
+                        <option value="Service Delivery">Service Delivery</option>
+                        <option value="Other">Other</option>
+                    </select>
+
+                    <button type="submit" class="glow">Store on Blockchain</button>
+                </form>
+            </div>
+
+            <div class="stats">
+                <div class="stat-card" id="totalPromises">Total Promises: 0</div>
+                <div class="stat-card" id="fulfilledPromises">Fulfilled Promises: 0</div>
+                <div class="stat-card" id="pendingPromises">Pending Promises: 0</div>
+            </div>
+
+            <h2>Recent Promises</h2>
+            <div class="promise-cards" id="recentPromises"></div>
+        </section>
+
+        <section id="dashboard">
+            <h2>All Promises Dashboard</h2>
+            <p id="walletInfo" style="color:#fff;font-weight:600;">Not connected</p>
+            <div class="promise-cards" id="allPromises"></div>
+        </section>
+
+        <section id="verify">
+            <h2>Verify Promise</h2>
+            <p style="color: #9a7aff; margin-bottom: 1rem;">Available Promise IDs: <strong style="color: #00ffff;">0</strong> and <strong style="color: #00ffff;">1</strong></p>
+            <form id="verifyPromiseForm">
+                <label for="promiseId">Enter Promise ID</label>
+                <input type="number" id="promiseId" name="promiseId" min="0" placeholder="e.g. 0" required>
+                <button type="submit" class="glow">Verify</button>
+            </form>
+            <div style="display: flex; gap: 1rem; margin-top: 1rem;">
+                <button type="button" class="quick-id-btn" onclick="setPromiseId(0)">Quick: ID 0</button>
+                <button type="button" class="quick-id-btn" onclick="setPromiseId(1)">Quick: ID 1</button>
+            </div>
+            <div id="verifyResult" class="card" style="margin-top: 1.5rem; display:none;"></div>
+        </section>
+    </main>
+
+    <footer>
+        Built on Monad Blockchain | Web3 Hackathon Project
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/ethers@6.16.0/dist/ethers.umd.min.js"></script>
+    <!-- load app.js with cache-busting query to ensure edits take effect -->
+    <script>
+        const s = document.createElement('script');
+        s.src = 'app.js?' + Date.now();
+        document.body.appendChild(s);
+    </script>
+    <script>
+        // smooth scrolling for in-page nav
+        const navLinks = document.querySelectorAll('nav a');
+        navLinks.forEach(a => {
+            a.addEventListener('click', e => {
+                e.preventDefault();
+                const target = document.querySelector(a.getAttribute('href'));
+                if (target) target.scrollIntoView({ behavior: 'smooth' });
+            });
+        });
+
+        // highlight active section in nav
+        const sections = document.querySelectorAll('section');
+        function updateActiveLink() {
+            const scrollPos = window.scrollY + 100;
+            sections.forEach(sec => {
+                if (scrollPos >= sec.offsetTop && scrollPos < sec.offsetTop + sec.offsetHeight) {
+                    navLinks.forEach(l => l.classList.remove('active'));
+                    const active = document.querySelector(`nav a[href="#${sec.id}"]`);
+                    if (active) active.classList.add('active');
+                }
+            });
+        }
+        window.addEventListener('scroll', updateActiveLink);
+        window.addEventListener('load', updateActiveLink);
+    </script>
+</body>
+</html>
