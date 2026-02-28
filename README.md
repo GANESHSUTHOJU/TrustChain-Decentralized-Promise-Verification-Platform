@@ -5,7 +5,7 @@ TrustChain is a simple decentralized application (dApp) for creating, tracking, 
 ## Key Concepts
 
 - **Smart Contract**: `contracts/TrustChain.sol` holds promise data and enforces rules about who can mark a promise fulfilled.
-- **Frontend**: `frontend/index.html` and `frontend/app.js` let users interact with the contract through a web browser.
+- **Frontend**: `index.html` and `app.js` in the project root let users interact with the contract through a web browser.
 - **Local Blockchain**: Hardhat provides a local Ethereum‑like network where you can deploy and test without spending real money.
 
 ## Faucets & Gas Fees
@@ -37,7 +37,7 @@ The app code now estimates gas before sending a transaction and logs the cost to
 
 ## Connecting MetaMask
 
-The frontend uses `ethers.js` to connect to MetaMask. When you click **Connect Wallet** the following code runs (excerpt from `frontend/app.js`):
+The frontend uses `ethers.js` to connect to MetaMask. When you click **Connect Wallet** the following code runs (excerpt from `app.js`):
 
 ```js
 async function connectWallet() {
